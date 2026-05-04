@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐺 CryptoWolf — Bankr Bot</title>
+
+<!-- ================================================ -->
+<!--  FARCASTER FRAME META TAGS                        -->
+<!--  Replace YOUR_URL with your actual deployed URL  -->
+<!-- ================================================ -->
+<meta property="fc:frame" content="vNext" />
+<meta property="fc:frame:image" content="YOUR_URL/preview.svg" />
+<meta property="fc:frame:button:1" content="🐺 Open CryptoWolf Bot" />
+<meta property="fc:frame:post_url" content="YOUR_URL" />
+
+<!-- Open Graph (shows in Discord, Twitter, etc.) -->
+<meta property="og:title" content="🐺 CryptoWolf — Bankr Perpetuals Bot" />
+<meta property="og:description" content="Aggressive BTC/ETH/SOL rotation bot for Avantis on Base. Copy the prompt, paste into Bankr, trade." />
+<meta property="og:image" content="YOUR_URL/preview.svg" />
+<meta property="og:url" content="YOUR_URL" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff9d;
+    --cyan: #00d4ff;
+    --red: #ff3d71;
+    --yellow: #ffd60a;
+    --bg: #030a06;
+    --card: #060f08;
+    --border: #0a2a14;
+    --dim: #1a3a22;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: #c8f5d8;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,255,157,0.015) 2px, rgba(0,255,157,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    padding: 32px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .wolf-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 20px var(--green));
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 12px var(--green)); }
+    50% { filter: drop-shadow(0 0 28px var(--green)) drop-shadow(0 0 60px var(--green)); }
+  }
+
+  .title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--green);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(0,255,157,0.5);
+    animation: glitch 8s infinite;
+  }
+
+  @keyframes glitch {
+    0%, 92%, 100% { transform: none; text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+    93% { transform: translateX(-2px); text-shadow: 2px 0 var(--cyan), -2px 0 var(--red); }
+    94% { transform: translateX(2px); text-shadow: -2px 0 var(--cyan), 2px 0 var(--red); }
+    95% { transform: none; text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+  }
+
+  .subtitle { color: var(--dim); font-size: 11px; letter-spacing: 3px; margin-top: 6px; text-transform: uppercase; }
+
+  .status-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .status-pill {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 2px; font-size: 11px;
+    color: var(--green); letter-spacing: 1px; flex: 1; text-align: center; text-transform: uppercase;
+  }
+  .status-pill span { color: var(--yellow); font-weight: bold; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--green); padding: 16px;
+    margin-bottom: 12px; position: relative; overflow: hidden;
+    animation: fadeIn 0.4s ease both;
+  }
+  .card::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 40px; height: 40px;
+    background: linear-gradient(225deg, rgba(0,255,157,0.06) 0%, transparent 60%);
+  }
+  .card.danger { border-left-color: var(--red); }
+  .card.warn { border-left-color: var(--yellow); }
+  .card.info { border-left-color: var(--cyan); }
+
+  .card-title {
+    font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+    color: var(--green); display: flex; align-items: center; gap: 8px;
+  }
+  .card.danger .card-title { color: var(--red); }
+  .card.warn .card-title { color: var(--yellow); }
+  .card.info .card-title { color: var(--cyan); }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  th { text-align: left; color: var(--dim); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  td { padding: 6px 0; border-bottom: 1px solid rgba(10,42,20,0.5); color: #c8f5d8; }
+  td:last-child { text-align: right; color: var(--green); }
+  td.red { color: var(--red) !important; }
+  td.yellow { color: var(--yellow) !important; }
+  td.cyan { color: var(--cyan) !important; }
+
+  .rule { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(10,42,20,0.5); }
+  .rule:last-child { border-bottom: none; }
+  .rule-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-top: 5px; flex-shrink: 0; box-shadow: 0 0 6px var(--green); }
+  .rule-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .rule-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .rule-dot.cyan { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+  .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .score-item { background: rgba(0,255,157,0.04); border: 1px solid var(--border); padding: 8px 10px; border-radius: 2px; }
+  .score-item .val { color: var(--green); font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; }
+  .score-item .label { color: var(--dim); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+  .cmd-block { background: #010801; border: 1px solid var(--border); padding: 12px; margin-top: 4px; font-size: 12px; }
+  .cmd-line { color: var(--green); padding: 2px 0; }
+  .cmd-line .comment { color: var(--dim); }
+
+  .copy-section { margin-top: 28px; text-align: center; }
+  .copy-btn {
+    background: transparent; border: 2px solid var(--green); color: var(--green);
+    font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase; padding: 16px 32px;
+    cursor: pointer; width: 100%; max-width: 400px;
+    position: relative; overflow: hidden; transition: all 0.2s;
+  }
+  .copy-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--green); transform: translateX(-100%);
+    transition: transform 0.3s ease; z-index: 0;
+  }
+  .copy-btn:hover::before { transform: translateX(0); }
+  .copy-btn:hover { color: #000; }
+  .copy-btn span { position: relative; z-index: 1; }
+  .copy-btn.copied { border-color: var(--cyan); color: var(--cyan); }
+  .copy-hint { color: var(--dim); font-size: 10px; letter-spacing: 2px; margin-top: 10px; text-transform: uppercase; }
+
+  .footer { text-align: center; margin-top: 32px; color: var(--dim); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+  .blink { animation: blink 1.2s step-end infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .card:nth-child(1){animation-delay:.1s} .card:nth-child(2){animation-delay:.2s}
+  .card:nth-child(3){animation-delay:.3s} .card:nth-child(4){animation-delay:.4s}
+  .card:nth-child(5){animation-delay:.5s} .card:nth-child(6){animation-delay:.6s}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <span class="wolf-icon">🐺</span>
+    <div class="title">CryptoWolf</div>
+    <div class="subtitle">Bankr Perpetuals Bot · Avantis · Base</div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-pill">Capital <span>&lt;$100</span></div>
+    <div class="status-pill">Assets <span>BTC/ETH/SOL</span></div>
+    <div class="status-pill">Mode <span>AGGRESSIVE</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ Capital & Position Rules</div>
+    <div class="score-grid">
+      <div class="score-item"><div class="val">$25</div><div class="label">Base size</div></div>
+      <div class="score-item"><div class="val">$35</div><div class="label">After 2 wins</div></div>
+      <div class="score-item"><div class="val">$20</div><div class="label">After loss</div></div>
+      <div class="score-item"><div class="val">1 max</div><div class="label">Open positions</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔱 Leverage Limits</div>
+    <table>
+      <tr><th>Asset</th><th>Default</th><th>Max (conf 90+)</th></tr>
+      <tr><td>BTC</td><td>5x</td><td class="cyan">8x</td></tr>
+      <tr><td>ETH</td><td>8x</td><td class="cyan">12x</td></tr>
+      <tr><td>SOL</td><td>10x</td><td class="cyan">15x</td></tr>
+    </table>
+  </div>
+
+  <div class="card warn">
+    <div class="card-title">🎯 Stop Loss & Take Profit</div>
+    <table>
+      <tr><th>Asset</th><th>Stop Loss</th><th>TP1</th><th>TP2</th></tr>
+      <tr><td>BTC</td><td class="red">0.7%</td><td>1.5%</td><td class="green">2.5%</td></tr>
+      <tr><td>ETH</td><td class="red">1.0%</td><td>2.0%</td><td class="green">3.5%</td></tr>
+      <tr><td>SOL</td><td class="red">1.5%</td><td>3.0%</td><td class="green">5.0%</td></tr>
+    </table>
+    <div style="margin-top:10px;color:var(--dim);font-size:11px;">At TP1 → move stop to breakeven &nbsp;|&nbsp; At TP2 → full close</div>
+  </div>
+
+  <div class="card info">
+    <div class="card-title">🔄 Rotation Logic</div>
+    <div class="rule"><div class="rule-dot cyan"></div><div>BTC UP → find ETH/SOL lagger → <strong style="color:var(--green)">LONG</strong></div></div>
+    <div class="rule"><div class="rule-dot cyan"></div><div>BTC DOWN → find weakest asset → <strong style="color:var(--red)">SHORT</strong></div></div>
+    <div class="rule"><div class="rule-dot yellow"></div><div>BTC ranging → <strong style="color:var(--yellow)">DO NOT TRADE</strong></div></div>
+    <div class="rule"><div class="rule-dot"></div><div>Rotate only from breakeven or profit</div></div>
+  </div>
+
+  <div class="card danger">
+    <div class="card-title">☠️ Kill Switch</div>
+    <div class="rule"><div class="rule-dot red"></div><div>3 consecutive losses → <strong style="color:var(--red)">PAUSE 2h</strong></div></div>
+    <div class="rule"><div class="rule-dot red"></div><div>Daily loss &gt; $15 → <strong style="color:var(--red)">STOP today</strong></div></div>
+    <div class="rule"><div class="rule-dot red"></div><div>BTC &gt;3% in 5min → <strong style="color:var(--yellow)">size -50%</strong></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💻 Bankr Commands</div>
+    <div class="cmd-block">
+      <div class="cmd-line">LONG SOL 10x SIZE 25 USDC</div>
+      <div class="cmd-line">LONG ETH 8x SIZE 25 USDC</div>
+      <div class="cmd-line">LONG BTC 5x SIZE 25 USDC</div>
+      <div class="cmd-line">SHORT ETH 8x SIZE 25 USDC</div>
+      <div class="cmd-line">CLOSE SOL POSITION</div>
+      <div class="cmd-line" style="color:var(--yellow)">LONG ETH 10x SIZE 35 USDC <span class="comment">← after 2W</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📈 Compounding Milestones</div>
+    <table>
+      <tr><th>Capital</th><th>Action</th></tr>
+      <tr><td>→ $120</td><td class="cyan">Base size $30</td></tr>
+      <tr><td>→ $200</td><td class="green">Base size $50, -20% lev</td></tr>
+      <tr><td>↓ $60</td><td class="red">Base size $15 (recovery)</td></tr>
+    </table>
+  </div>
+
+  <div class="copy-section">
+    <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">
+      <span id="copyLabel">⬇ Copy Bankr Prompt</span>
+    </button>
+    <div class="copy-hint">paste directly into bankr as system prompt</div>
+  </div>
+
+  <div class="footer">
+    <span class="blink">█</span> CryptoWolf · Avantis · Base · 2025
+  </div>
+</div>
+
+<script>
+const PROMPT = `🐺 CRYPTOWOLF — BANKR AGGRESSIVE BOT
+
+IDENTITY:
+You are an aggressive perpetuals trading bot on Avantis (Base).
+Trade BTC-PERP, ETH-PERP, SOL-PERP.
+Maximize compounding. Protect capital. Never chase price.
+
+CAPITAL RULES:
+- Active capital: ~$80 (keep $15-20 as reserve, never touch)
+- Base position size: $25
+- After 2 consecutive wins: increase to $35
+- After any loss: reset to $20
+- Max 1 open position at a time
+
+LEVERAGE:
+- BTC: 5x default, 8x max
+- ETH: 8x default, 12x max
+- SOL: 10x default, 15x max
+Never exceed these limits.
+
+ASSET SELECTION:
+1. Check BTC direction first
+2. BTC trending UP → find ETH or SOL lagging → go LONG on lagger
+3. BTC trending DOWN → find weakest asset → go SHORT
+4. BTC ranging or choppy → DO NOT TRADE, wait
+
+ENTRY CONDITIONS (need ALL 3):
+LONG: BTC above recent 15m high + target asset lagging + price near support
+SHORT: BTC below recent 15m low + target asset weak + price near resistance
+
+STOP LOSS (always set at entry):
+- BTC: 0.7%
+- ETH: 1.0%
+- SOL: 1.5%
+
+TAKE PROFIT:
+- BTC: TP1 1.5% → move SL to breakeven → TP2 2.5% close all
+- ETH: TP1 2.0% → move SL to breakeven → TP2 3.5% close all
+- SOL: TP1 3.0% → move SL to breakeven → TP2 5.0% close all
+
+KILL SWITCH:
+- 3 consecutive losses → stop trading for 2 hours
+- Daily loss > $15 → stop for the rest of the day
+- BTC moves >3% in 5 minutes → reduce position size 50%
+
+ROTATION:
+- Only rotate if current position is at breakeven or in profit
+- Move stop to breakeven first, then open new position
+- Never hold 2 positions with combined size over $40
+
+CONFIDENCE CHECK (score before every entry):
++1 BTC direction is clear
++1 Target asset has clear lag or structure
++1 Entry is at a level, not mid-air
++1 Stop loss placement is logical
++1 Market is not in extreme volatility spike
+Score 0-2 → no trade | 3-4 → base size | 5 → max size
+
+COMMANDS:
+LONG SOL 10x SIZE 25 USDC
+LONG ETH 8x SIZE 25 USDC
+LONG BTC 5x SIZE 25 USDC
+SHORT ETH 8x SIZE 25 USDC
+CLOSE [ASSET] POSITION
+
+COMPOUNDING:
+Capital $120 → base size $30
+Capital $200 → base size $50, reduce leverage 20%
+Capital drops to $60 → base size $15 until recovery
+
+IDENTITY: Flow sniper. Enter at structure. Exit into liquidity. Protect capital first.`;
+
+function copyPrompt() {
+  navigator.clipboard.writeText(PROMPT).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const label = document.getElementById('copyLabel');
+    btn.classList.add('copied');
+    label.textContent = '✓ Copied to clipboard';
+    setTimeout(() => { btn.classList.remove('copied'); label.textContent = '⬇ Copy Bankr Prompt'; }, 2500);
+  });
+}
+</script>
+</body>
+</html>
